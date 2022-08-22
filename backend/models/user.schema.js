@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import Todo from './todo.schema.js';
 
 const userSchema = new mongoose.Schema({
@@ -25,7 +26,17 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.methods.checkPassword = async function (plainPassword) {
-  return await bcrypt.compare(plainPassword, this.password);
+  const user = this;
+  return await bcrypt.compare(plainPassword, user.password);
+};
+
+userSchema.methods.generateToken = function () {
+  const user = this;
+  return jwt.sign({
+    id: user._id
+  }, process.env.JWT_SECRET, {
+    expiresIn: '2000h'
+  });
 }
 
 userSchema.pre('save', async function () {
@@ -34,7 +45,7 @@ userSchema.pre('save', async function () {
   if (user.isModified('password')) {
     user.password = await bcrypt.hash(
       user.password, 
-      process.env.SALT_ROUNDS
+      parseInt(process.env.SALT_ROUNDS)
     );
   }
 });

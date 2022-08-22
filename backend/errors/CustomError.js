@@ -4,6 +4,7 @@ export class CustomError extends Error {
   errorObject;
 
   constructor(statusCode, message, errorObject = null) {
+    super();
     this.statusCode = statusCode;
     this.message = message;
     this.errorObject = errorObject;
