@@ -1,12 +1,14 @@
 import express from 'express';
 import { CustomError } from './errors/CustomError.js';
-import authRouter from './routes/auth.routes.js';
+import authRouter from './routes/auth.route.js';
+import userRouter from './routes/user.route.js';
 
 const app = express();
 
 app.use(express.json());
 
-app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/users', userRouter);
 
 app.use((err, _req, res, _next) => {
   if (err instanceof CustomError) {
